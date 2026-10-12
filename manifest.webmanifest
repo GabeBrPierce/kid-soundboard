@@ -4,6 +4,7 @@
   "description": "Fun sound effects for kids",
   "start_url": "./index.html",
   "scope": "./",
+  "developer": { "name": "GabeBrPierce", "url": "https://github.com/GabeBrPierce" },
   "display": "standalone",
   "orientation": "any",
   "background_color": "#222222",
