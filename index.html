@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Kid Soundboard</title>
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.webmanifest">
@@ -11,13 +11,11 @@
 <link rel="icon" href="icons/icon-192.png">
 </head>
 <body>
-<header>
-  <button id="prev" class="nav" aria-label="Previous">◀</button>
-  <nav id="tabs"></nav>
-  <button id="next" class="nav" aria-label="Next">▶</button>
-</header>
-<main id="content"></main>
-<footer>Emoji art: Twitter Twemoji (CC-BY 4.0). Sounds: freesound.org (CC0) plus custom sounds.</footer>
+<div id="app">
+  <div id="top"><span class="arrow">◀</span><span id="title"></span><span class="arrow">▶</span></div>
+  <div id="now"></div>
+  <div id="pad"></div>
+</div>
 <script src="app.js"></script>
 </body>
 </html>

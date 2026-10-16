@@ -13,55 +13,78 @@ const CATEGORIES = [
     items: "cash-register-beep kaching receipt-printing" },
 ];
 
+// One page = up to 10 sounds, mapped to keys 1-9 then 0.
+const PAGES = [];
+for (const cat of CATEGORIES) {
+  const names = cat.items.split(" ");
+  const count = Math.ceil(names.length / 10);
+  for (let p = 0; p < count; p++) {
+    PAGES.push({ cat, names: names.slice(p * 10, p * 10 + 10), num: p + 1, of: count });
+  }
+}
+
+const KEY_ORDER = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 const label = (n) => n.replace(/[_-]/g, " ");
-let current = 0;
+const app = document.getElementById("app");
+const title = document.getElementById("title");
+const nowPlaying = document.getElementById("now");
+const pad = document.getElementById("pad");
+
+let page = 0;
+let audios = {};
 let playing = null;
+const cells = {};
 
-const tabs = document.getElementById("tabs");
-const content = document.getElementById("content");
-
-CATEGORIES.forEach((cat, i) => {
-  const tab = document.createElement("button");
-  tab.className = "tab";
-  tab.textContent = cat.title;
-  tab.onclick = () => show(i);
-  tabs.appendChild(tab);
-
-  const sec = document.createElement("section");
-  sec.className = "page";
-  sec.style.background = cat.gradient;
-  sec.innerHTML = `<h1>${cat.title}</h1><div class="grid"></div>`;
-  const grid = sec.querySelector(".grid");
-  cat.items.split(" ").forEach((name) => {
-    const card = document.createElement("button");
-    card.className = "card";
-    const art = cat.emoji
-      ? `<div class="emoji">${cat.emoji[name]}</div>`
-      : `<img src="image/${cat.id}/${name}.svg" alt="">`;
-    card.innerHTML = `${art}<span>${label(name)}</span>`;
-    const audio = new Audio(`sound/${cat.id}/${name}.mp3`);
-    audio.preload = "auto";
-    card.onclick = () => {
-      if (playing && playing !== audio) { playing.pause(); }
-      audio.currentTime = 0;
-      audio.play();
-      playing = audio;
-      card.classList.add("pop");
-      setTimeout(() => card.classList.remove("pop"), 250);
-    };
-    grid.appendChild(card);
-  });
-  content.appendChild(sec);
+KEY_ORDER.forEach((k) => {
+  const cell = document.createElement("button");
+  cell.className = "key" + (k === "0" ? " zero" : "");
+  cell.onclick = () => press(k);
+  pad.appendChild(cell);
+  cells[k] = cell;
 });
 
 function show(i) {
-  current = (i + CATEGORIES.length) % CATEGORIES.length;
-  [...content.children].forEach((s, j) => s.classList.toggle("active", j === current));
-  [...tabs.children].forEach((t, j) => t.classList.toggle("active", j === current));
-  window.scrollTo(0, 0);
+  page = (i + PAGES.length) % PAGES.length;
+  const { cat, names, num, of } = PAGES[page];
+  if (playing) playing.pause();
+  playing = null;
+  audios = {};
+  app.style.background = cat.gradient;
+  title.textContent = of > 1 ? `${cat.title} ${num}/${of}` : cat.title;
+  nowPlaying.textContent = "";
+  KEY_ORDER.forEach((k, idx) => {
+    const name = names[idx];
+    const cell = cells[k];
+    if (!name) { cell.innerHTML = `<b>${k}</b>`; cell.classList.add("empty"); return; }
+    cell.classList.remove("empty");
+    const art = cat.emoji ? `<i>${cat.emoji[name]}</i>` : `<img src="image/${cat.id}/${name}.svg" alt="">`;
+    cell.innerHTML = `${art}<b>${k}</b>`;
+    const a = new Audio(`sound/${cat.id}/${name}.mp3`);
+    a.preload = "auto";
+    audios[k] = a;
+  });
 }
-document.getElementById("prev").onclick = () => show(current - 1);
-document.getElementById("next").onclick = () => show(current + 1);
+
+function press(k) {
+  const a = audios[k];
+  if (!a) return;
+  if (playing && playing !== a) playing.pause();
+  a.currentTime = 0;
+  a.play().catch(() => {});
+  playing = a;
+  const name = PAGES[page].names[KEY_ORDER.indexOf(k)];
+  nowPlaying.textContent = label(name);
+  cells[k].classList.add("pop");
+  setTimeout(() => cells[k].classList.remove("pop"), 200);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") { show(page - 1); e.preventDefault(); }
+  else if (e.key === "ArrowRight") { show(page + 1); e.preventDefault(); }
+  else if (/^[0-9]$/.test(e.key)) { press(e.key); e.preventDefault(); }
+});
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+
 show(0);
 
 if ("serviceWorker" in navigator) {
