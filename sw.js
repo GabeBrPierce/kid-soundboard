@@ -1,9 +1,12 @@
-const CACHE = "soundboard-1792111337799";
+const CACHE = "soundboard-1792113137076";
 const FILES = [
  "./",
  "./app.js",
+ "./icons/icon-112x112.png",
  "./icons/icon-192.png",
+ "./icons/icon-224x224.png",
  "./icons/icon-512.png",
+ "./icons/icon-56x56.png",
  "./icons/maskable-512.png",
  "./image/animals/bird.svg",
  "./image/animals/cat.svg",
