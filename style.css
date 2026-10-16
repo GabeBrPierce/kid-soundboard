@@ -12,3 +12,4 @@ html, body { height: 100%; overflow: hidden; background: #000; font-family: "Fre
 .key.empty { background: #fff3; border-color: #fff3; color: #fff8; }
 .key.zero { grid-column: 2; }
 .key.pop { background: #ffe066; border-color: #fff; }
+#soft { display: flex; justify-content: space-between; height: 18px; padding-top: 2px; font-size: 13px; font-weight: bold; text-shadow: 0 1px 0 #0008; }

@@ -79,10 +79,12 @@ function press(k) {
 }
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") { show(page - 1); e.preventDefault(); }
-  else if (e.key === "ArrowRight") { show(page + 1); e.preventDefault(); }
+  if (e.key === "ArrowLeft" || e.key === "SoftLeft") { show(page - 1); e.preventDefault(); }
+  else if (e.key === "ArrowRight" || e.key === "SoftRight") { show(page + 1); e.preventDefault(); }
   else if (/^[0-9]$/.test(e.key)) { press(e.key); e.preventDefault(); }
 });
+document.getElementById("sl").onclick = () => show(page - 1);
+document.getElementById("sr").onclick = () => show(page + 1);
 document.addEventListener("contextmenu", (e) => e.preventDefault());
 
 show(0);
